@@ -2,9 +2,11 @@
 ### Example user template
 
 # IntelliJ project files
-.idea
+../.idea
+.idea/
+.vscode/
 *.iml
 out
 gen
 *.log
-.env
+host-alert/.env
