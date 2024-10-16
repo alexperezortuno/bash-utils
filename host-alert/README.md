@@ -1,11 +1,12 @@
-# bash-utils
+# host-alerts
 
-A collection of bash scripts that I use to make my life easier.
+## Description
 
-## Installation
+This script is used to send alerts to telegram when a specific log message is found in the log file.
+
+## usage
 
 ```bash
-git clone
 cd bash-utils
 sudo chmod +x ./log-alert.sh
 ./log-alert.sh
