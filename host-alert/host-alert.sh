@@ -4,10 +4,9 @@ if [ -f .env ]; then
   export $(grep -v '^#' .env | xargs)
 fi
 
-echo "BOT_TOKEN: $BOT_TOKEN"
-echo "CHAT_ID: $CHAT_ID"
+echo "Starting host alert script"
 
-log_file="$(pwd)/log-alert.log"
+log_file="$(pwd)/${LOG_FILE:-host_alert.log}"
 
 send_telegram_message() {
   local url="https://api.telegram.org/bot$BOT_TOKEN/sendMessage"

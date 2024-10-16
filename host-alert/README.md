@@ -8,8 +8,8 @@ This script is used to send alerts to telegram when a specific log message is fo
 
 ```bash
 cd bash-utils
-sudo chmod +x ./log-alert.sh
-./log-alert.sh
+sudo chmod +x ./host-alert.sh
+./host-alert.sh
 ```
 
 ## How to get ChatId
