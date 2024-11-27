@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ -f .env ]; then
-  export $(grep -v '^#' .env | xargs)
+  export $(grep -v '^#' .env | grep -E '^[A-Za-z_][A-Za-z0-9_]*=' | xargs)
 fi
 
 echo "Starting host alert script"
@@ -33,7 +33,7 @@ ping_to_host() {
 detect_redirection() {
   # shellcheck disable=SC2155
   local response_code=$(curl -s -o /dev/null -w "%{http_code}" "$1")
-
+  echo "Response code: $response_code"
   if [ "$response_code" -ne 200 ]; then
     send_telegram_message "[Alert] Non-200 response: detected for $1 with code $response_code"
     ping_to_host "$1"
@@ -55,11 +55,15 @@ verify_or_create_log_file() {
 
 main() {
   verify_or_create_log_file
-  local hosts=($HOSTS)
+  local hosts=("${HOSTS}")
 
   while true; do
     for host in "${hosts[@]}"; do
-        detect_redirection "$host"
+        IFS=',' read -r -a array <<< "$host"
+        for element in "${array[@]}"; do
+          echo "Checking host: $element"
+          detect_redirection "$element"
+        done
     done
     sleep 60
   done
