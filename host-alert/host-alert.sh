@@ -55,7 +55,7 @@ verify_or_create_log_file() {
 
 main() {
   verify_or_create_log_file
-  local hosts=("https://ossaycia.cl" "https://glign.com")
+  local hosts=("https://test1.com" "https://test2.com")
 
   while true; do
     for host in "${hosts[@]}"; do
