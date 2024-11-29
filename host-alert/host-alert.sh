@@ -1,10 +1,12 @@
 #!/bin/bash
+# Get the directory of the script
+script_dir=$(dirname "$0")
 
 if [ -f .env ]; then
-  export $(grep -v '^#' .env | grep -E '^[A-Za-z_][A-Za-z0-9_]*=' | xargs)
+  export $(grep -v '^#' "$script_dir/.env" | grep -E '^[A-Za-z_][A-Za-z0-9_]*=' | xargs)
 fi
 
-echo "Starting host alert script"
+logger -t host-alert  "starting host alert script"
 
 log_file="$(pwd)/${LOG_FILE:-host_alert.log}"
 
@@ -62,6 +64,7 @@ main() {
   #while true; do
     for host in "${hosts[@]}"; do
         IFS=',' read -r -a array <<< "$host"
+        logger -t host-alert "checking hosts: ${array[@]}"
         for element in "${array[@]}"; do
           logger -t host-alert "checking host: $element"
           detect_redirection "$element"
