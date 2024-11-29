@@ -11,16 +11,9 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Set up Bash
-        uses: stefanzweifel/bash-actions/setup-bash@v1
+        uses: DeStefano/bash-actions/setup-bash@v1
 
       - name: Run ShellCheck
         run: |
           sudo apt-get install -y shellcheck
           shellcheck host-alert/host-alert.sh
-
-      - name: Run tests
-        run: |
-          # Aquí puedes agregar comandos para ejecutar tus pruebas
-          echo "Running tests..."
-          # Por ejemplo, podrías ejecutar un script de prueba
-          bash test-script.sh
