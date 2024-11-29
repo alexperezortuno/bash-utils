@@ -64,7 +64,6 @@ main() {
   #while true; do
     for host in "${hosts[@]}"; do
         IFS=',' read -r -a array <<< "$host"
-        logger -t host-alert "checking hosts: ${array[@]}"
         for element in "${array[@]}"; do
           logger -t host-alert "checking host: $element"
           detect_redirection "$element"
