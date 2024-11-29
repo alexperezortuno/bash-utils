@@ -5,7 +5,7 @@ load_env_file() {
   script_dir=$(dirname "$0")
 
   if [ -f "$script_dir/.env" ]; then
-    export $(grep -v '^#' "$script_dir/.env" | grep -E '^[A-Za-z_][A-Za-z0-9_]*=' | xargs)
+    export "$(grep -v '^#' "$script_dir/.env" | grep -E '^[A-Za-z_][A-Za-z0-9_]*=' | xargs)"
   fi
 }
 
@@ -14,7 +14,7 @@ logger -t host-alert  "starting host alert script"
 log_file="$(pwd)/${LOG_FILE:-host_alert.log}"
 
 send_telegram_message() {
-  local timestamp=$(date +"%Y-%m-%d %H:%M:%S")
+  timestamp=$(date +"%Y-%m-%d %H:%M:%S")
   local url="https://api.telegram.org/bot$BOT_TOKEN/sendMessage"
   local data="{\"chat_id\": \"$CHAT_ID\", \"text\": \"[$timestamp] $1\", \"disable_notification\": true}"
   curl -X POST -H 'Content-Type: application/json' \
