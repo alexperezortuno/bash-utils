@@ -37,8 +37,8 @@ detect_redirection() {
   # shellcheck disable=SC2155
   local response_code=$(curl -s -o /dev/null -w "%{http_code}" "$1")
   echo "Response code: $response_code"
-  if [ "$response_code" -ne 200 || "$response_code" -ne 000 ]; then
-    send_telegram_message "[Alert] non-200 response: detected for $1 with code $response_code"
+  if [ "$response_code" -ne 200 ]; then
+    send_telegram_message "[Alert] error response: detected for $1 with code $response_code"
     ping_to_host "$1"
   fi
 }
