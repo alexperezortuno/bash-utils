@@ -1,10 +1,13 @@
 #!/bin/bash
-# Get the directory of the script
-script_dir=$(dirname "$0")
 
-if [ -f .env ]; then
-  export $(grep -v '^#' "$script_dir/.env" | grep -E '^[A-Za-z_][A-Za-z0-9_]*=' | xargs)
-fi
+load_env_file() {
+  # Get the directory of the script
+  script_dir=$(dirname "$0")
+
+  if [ -f "$script_dir/.env" ]; then
+    export $(grep -v '^#' "$script_dir/.env" | grep -E '^[A-Za-z_][A-Za-z0-9_]*=' | xargs)
+  fi
+}
 
 logger -t host-alert  "starting host alert script"
 
@@ -57,6 +60,7 @@ verify_or_create_log_file() {
 }
 
 main() {
+  load_env_file
   logger -t host-alert "start check hosts"
   verify_or_create_log_file
   local hosts=("${HOSTS}")

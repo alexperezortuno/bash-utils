@@ -1,0 +1,26 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Bash
+        uses: stefanzweifel/bash-actions/setup-bash@v1
+
+      - name: Run ShellCheck
+        run: |
+          sudo apt-get install -y shellcheck
+          shellcheck host-alert/host-alert.sh
+
+      - name: Run tests
+        run: |
+          # Aquí puedes agregar comandos para ejecutar tus pruebas
+          echo "Running tests..."
+          # Por ejemplo, podrías ejecutar un script de prueba
+          bash test-script.sh
