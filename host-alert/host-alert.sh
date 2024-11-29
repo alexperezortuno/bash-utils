@@ -55,6 +55,7 @@ verify_or_create_log_file() {
 }
 
 main() {
+  logger -t host-alert "start check hosts"
   verify_or_create_log_file
   local hosts=("${HOSTS}")
 
@@ -62,10 +63,11 @@ main() {
     for host in "${hosts[@]}"; do
         IFS=',' read -r -a array <<< "$host"
         for element in "${array[@]}"; do
-          echo "Checking host: $element"
+          logger -t host-alert "checking host: $element"
           detect_redirection "$element"
         done
     done
+  logger -t host-alert "end check hosts"
   #  sleep 60
   #done
 }
