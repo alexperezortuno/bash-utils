@@ -58,7 +58,7 @@ main() {
   verify_or_create_log_file
   local hosts=("${HOSTS}")
 
-  while true; do
+  #while true; do
     for host in "${hosts[@]}"; do
         IFS=',' read -r -a array <<< "$host"
         for element in "${array[@]}"; do
@@ -66,8 +66,8 @@ main() {
           detect_redirection "$element"
         done
     done
-    sleep 60
-  done
+  #  sleep 60
+  #done
 }
 
 main
