@@ -1,0 +1,16 @@
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run ShellCheck
+        run: |
+          sudo apt-get install -y shellcheck
+          shellcheck host-alert/host-alert.sh
