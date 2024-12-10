@@ -10,3 +10,4 @@ out
 gen
 *.log
 host-alert/.env
+.env
