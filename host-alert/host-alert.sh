@@ -28,7 +28,7 @@ save_log() {
 
 ping_to_host() {
   h=$(remove_protocol "$1")
-  if ! ping -c 1 "$h" &> /dev/null; then
+  if ! ping -c 10 "$h" &> /dev/null; then
     send_telegram_message "[Alert] ping to host: $h is timeout"
     save_log "ping to host $h timeout"
   else
