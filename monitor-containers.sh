@@ -76,12 +76,7 @@ check_containers() {
 
 # Initialize the history on the first run
 initialize_history
-
-# Infinite loop to execute the check periodically
-while true; do
-    # Update history with new containers
-    update_history
-    # Check the status of the containers in the history
-    check_containers
-    sleep 60  # Wait 60 seconds before the next check
-done
+# Update history with new containers
+update_history
+# Check the status of the containers in the history
+check_containers
