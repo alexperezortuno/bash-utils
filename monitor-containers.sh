@@ -1,4 +1,14 @@
 #!/bin/bash
+LOCKFILE="/tmp/monitor-containers.lock"
+
+# Verificar si el lock file ya existe
+if [ -e "$LOCKFILE" ]; then
+    echo "the script is already running"
+    exit 1
+fi
+
+touch "$LOCKFILE"
+trap 'rm -f "$LOCKFILE"' EXIT
 
 load_env_file() {
   # Get the directory of the script
@@ -80,3 +90,4 @@ initialize_history
 update_history
 # Check the status of the containers in the history
 check_containers
+exit 0
