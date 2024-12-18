@@ -1,7 +1,7 @@
 #!/bin/bash
 LOCKFILE="/tmp/monitor-containers.lock"
 
-# Verificar si el lock file ya existe
+# verify if the script is already running
 if [ -e "$LOCKFILE" ]; then
     echo "the script is already running"
     exit 1
