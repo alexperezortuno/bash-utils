@@ -1,5 +1,14 @@
 #!/bin/bash
 
+load_env_file() {
+  # Get the directory of the script
+  script_dir=$(dirname "$0")
+
+  if [ -f "$script_dir/.env" ]; then
+    export "$(grep -v '^#' "$script_dir/.env" | grep -E '^[A-Za-z_][A-Za-z0-9_]*=' | xargs)"
+  fi
+}
+
 send_telegram_message() {
    timestamp=$(date +"%Y-%m-%d %H:%M:%S")
    local url="https://api.telegram.org/bot$BOT_TOKEN/sendMessage"
@@ -7,31 +16,72 @@ send_telegram_message() {
    curl -X POST -H 'Content-Type: application/json' \
    -d  "$data" \
    "$url"
-   logger -t host-alert "send_telegram_message: $1"
- }
+   logger -t monitor-containers "send_telegram_message: $1"
+}
 
- process_container_event() {
-   local status="$1"
-   local container_name="$2"
-   local exit_code="$3"
+# Path to the log file
+LOG_FILE="/tmp/docker_container_monitor.log"
+# File where the list of active containers to monitor will be saved
+HISTORY_FILE="/tmp/docker_container_history.txt"
 
-   local message
-    if [ "$status" == "start" ]; then
-      message="Container $container_name started"
-    elif [[ -z "$exit_code" ]] && [ "$exit_code" -eq 0 ]; then
-      message="Container $container_name stopped"
-    else
-      message="Container $container_name stopped with exit code $exit_code"
+# Initialize the history file if it does not exist
+initialize_history() {
+    if [ ! -f "$HISTORY_FILE" ]; then
+        logger -t monitor-containers "$(date +'%Y-%m-%d %H:%M:%S') - Initializing history of active containers" >> "$LOG_FILE"
+        docker ps --format "{{.ID}} {{.Names}}" > "$HISTORY_FILE"
     fi
+}
 
-    send_telegram_message "$message"
- }
+# Function to update the history if new active containers are detected
+update_history() {
+    current_containers=$(docker ps --format "{{.ID}} {{.Names}}")
 
-docker events \
-  --filter type=container \
-  --filter event=die \
-  --filter event=start \
-  --format '{{.Status}} {{.Actor.Attributes.name}} {{.Actor.Attributes.exitCode}}' | \
-while read -r status container_name exit_code; do
-  process_container_event "$status" "$container_name" "$exit_code"
+    while IFS= read -r line; do
+        container_id=$(echo "$line" | awk '{print $1}')
+        container_name=$(echo "$line" | awk '{print $2}')
+
+        # If the container is not in the history, add it and log it
+        if ! grep -q "$container_id" "$HISTORY_FILE"; then
+            echo "$line" >> "$HISTORY_FILE"
+            logger -t monitor-containers "$line"
+            echo "$(date +'%Y-%m-%d %H:%M:%S') - New container detected: $container_name ($container_id) added to history" >> "$LOG_FILE"
+            logger -t monitor-containers "$(date +'%Y-%m-%d %H:%M:%S') - New container detected: $container_name ($container_id) added to history"
+        fi
+    done <<< "$current_containers"
+}
+
+# Function to check the status of the containers in the history
+check_containers() {
+    stopped_containers=""
+
+    while IFS= read -r line; do
+        container_id=$(echo "$line" | awk '{print $1}')
+        container_name=$(echo "$line" | awk '{print $2}')
+
+        # Check if the container is in "exited" state
+        if [ "$(docker inspect -f '{{.State.Status}}' "$container_id")" = "exited" ]; then
+            send_telegram_message "Container $container_name stopped"
+            stopped_containers+="$container_id $container_name\n"
+        fi
+    done < "$HISTORY_FILE"
+
+    if [ -n "$stopped_containers" ]; then
+        echo -e "$(date +'%Y-%m-%d %H:%M:%S') - Stopped containers found:\n$stopped_containers" >> "$LOG_FILE"
+        logger -t monitor-containers "$(date +'%Y-%m-%d %H:%M:%S') - Stopped containers found:\n$stopped_containers"
+    else
+        echo "$(date +'%Y-%m-%d %H:%M:%S') - All containers in the history are running correctly" >> "$LOG_FILE"
+        logger -t monitor-containers "$(date +'%Y-%m-%d %H:%M:%S') - All containers in the history are running correctly"
+    fi
+}
+
+# Initialize the history on the first run
+initialize_history
+
+# Infinite loop to execute the check periodically
+while true; do
+    # Update history with new containers
+    update_history
+    # Check the status of the containers in the history
+    check_containers
+    sleep 60  # Wait 60 seconds before the next check
 done

@@ -4,8 +4,8 @@ load_env_file() {
   # Get the directory of the script
   script_dir=$(dirname "$0")
 
-  if [ -f "$script_dir/.env" ]; then
-    export "$(grep -v '^#' "$script_dir/.env" | grep -E '^[A-Za-z_][A-Za-z0-9_]*=' | xargs)"
+  if [ -f "$script_dir/../.env" ]; then
+    export "$(grep -v '^#' "$script_dir/../.env" | grep -E '^[A-Za-z_][A-Za-z0-9_]*=' | xargs)"
   fi
 }
 
