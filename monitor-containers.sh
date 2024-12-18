@@ -79,7 +79,6 @@ check_containers() {
         echo -e "$(date +'%Y-%m-%d %H:%M:%S') - Stopped containers found:\n$stopped_containers" >> "$LOG_FILE"
         logger -t monitor-containers "$(date +'%Y-%m-%d %H:%M:%S') - Stopped containers found:\n$stopped_containers"
     else
-        echo "$(date +'%Y-%m-%d %H:%M:%S') - All containers in the history are running correctly" >> "$LOG_FILE"
         logger -t monitor-containers "$(date +'%Y-%m-%d %H:%M:%S') - All containers in the history are running correctly"
     fi
 }
