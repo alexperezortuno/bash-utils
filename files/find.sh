@@ -5,6 +5,7 @@ SIZE="1"
 MEASURE="M"
 ABS_PATH="/"
 EXTENSION="*"
+TIME=365
 
 function get_params() {
   while [[ $# -gt 0 ]]; do
@@ -16,6 +17,7 @@ function get_params() {
           -r|--measure) MEASURE="$2"; shift ;;
           -d|--directory) ABS_PATH="$2"; shift ;;
           -e|--extension) EXTENSION="$2"; shift ;;
+          -t|--time) TIME="$2"; shift ;;
           -h|--help)
             echo "Usage: $0 [options]"
             echo "Options:"
@@ -41,14 +43,14 @@ get_params "$@"
 
 if [ $SIZE_MORE_THAN -eq 1 ]; then
   if [ "$SAVE" -eq 1 ]; then
-    find "$ABS_PATH" -type f -size +"$SIZE""$MEASURE" -name "*.$EXTENSION" > results.txt
+    find "$ABS_PATH" -type f -size +"$SIZE""$MEASURE" -mtime -"$TIME" -name "*.$EXTENSION" > results.txt
   else
-    find "$ABS_PATH" -type f -size +"$SIZE""$MEASURE" -name "*.$EXTENSION"
+    find "$ABS_PATH" -type f -size +"$SIZE""$MEASURE" -mtime -"$TIME" -name "*.$EXTENSION"
   fi
 elif [ $SIZE_LESS_THAN -eq 1 ]; then
   if [ "$SAVE" -eq 1 ]; then
-    find "$ABS_PATH" -type f -size -"$SIZE""$MEASURE" -name "*.$EXTENSION" > results.txt
+    find "$ABS_PATH" -type f -size -"$SIZE""$MEASURE" -mtime -"$TIME" -name "*.$EXTENSION" > results.txt
   else
-    find "$ABS_PATH" -type f -size -"$SIZE""$MEASURE" -name "*.$EXTENSION"
+    find "$ABS_PATH" -type f -size -"$SIZE""$MEASURE" -mtime -"$TIME" -name "*.$EXTENSION"
   fi
 fi
