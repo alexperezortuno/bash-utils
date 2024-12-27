@@ -1,4 +1,3 @@
-#!/bin/bash
 NAME=""
 ABS_PATH="/"
 
