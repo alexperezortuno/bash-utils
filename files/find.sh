@@ -7,16 +7,11 @@ ABS_PATH="/"
 function get_params() {
   while [[ $# -gt 0 ]]; do
       case "$1" in
-          -l|--lt) SIZE_LESS_THAN=1
-          ;;
-          -m|--mt) SIZE_MORE_THAN=1
-          ;;
-          -s|--size) SIZE="$2"
-          ;;
-          -r|--measure) MEASURE="$2"
-          ;;
-          -f|--absolute_path) ABS_PATH="$2"
-          ;;
+          -l|--lt) SIZE_LESS_THAN=1 ;;
+          -m|--mt) SIZE_MORE_THAN=1 ;;
+          -s|--size) SIZE="$2" ;;
+          -r|--measure) MEASURE="$2" ;;
+          -f|--absolute_path) ABS_PATH="$2" ;;
           \?) echo "Invalid option: -$2" >&2 ;;
       esac
       shift
