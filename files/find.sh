@@ -1,3 +1,5 @@
+#!/bin/bash
+
 SIZE_MORE_THAN=0
 SIZE_LESS_THAN=0
 SAVE=0
